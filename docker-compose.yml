@@ -2,35 +2,28 @@ version: '3.8'
 
 services:
   bot:
-    # Build image from Dockerfile
     build:
       context: .
       dockerfile: Dockerfile
     
-    # Image name
     image: gmail-harvester-bot:latest
     container_name: gmail_bot
     
-    # Always restart unless stopped
     restart: unless-stopped
     
-    # Environment variables from .env file
     env_file:
       - .env
     
-    # Volumes for data persistence
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
     
-    # Logging configuration
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
     
-    # Resource limits
     deploy:
       resources:
         limits:
@@ -40,11 +33,9 @@ services:
           cpus: '0.5'
           memory: 256M
     
-    # Network
     networks:
       - botnet
     
-    # Graceful shutdown wait
     stop_grace_period: 30s
 
 networks:

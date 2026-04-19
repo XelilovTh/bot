@@ -190,7 +190,6 @@ class BotLogger:
         logger = logging.getLogger("bot")
         logger.setLevel(getattr(logging, self.config.log_level.upper()))
         
-        # Console handler
         console_handler = logging.StreamHandler()
         console_handler.setLevel(getattr(logging, self.config.log_level.upper()))
         formatter = logging.Formatter(
@@ -200,7 +199,6 @@ class BotLogger:
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
         
-        # File handler with rotation
         file_handler = logging.handlers.RotatingFileHandler(
             self.config.log_file,
             maxBytes=self.config.log_max_size_mb * 1024 * 1024,
@@ -329,7 +327,7 @@ Format: `ad@gmail.com`"""
     EMAIL_ACCEPTED = """✅ Email qəbul edildi!
 
 🔐 İndi isə **şifrəni** daxil edin:
-(Minimum 8 simvol, herf + rəqəm)"""
+(Minimum 8 simvol, 1 kiçik hərf + 1 rəqəm)"""
     
     EMAIL_INVALID = """❌ **Email formatı düzgün deyil!**
 
@@ -673,7 +671,6 @@ class DatabaseManager:
         with self.get_connection() as conn:
             cursor = conn.cursor()
             
-            # Users table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1151,19 +1148,16 @@ class BotCore:
                 app_version=self._get_app_version()
             )
             
-            # Register event handlers
             self.client.add_event_handler(
                 self._handle_start,
                 events.NewMessage(pattern='/start', incoming=True)
             )
             
-            # Admin panel handlers
             self.client.add_event_handler(
                 self._handle_admin_command,
                 events.NewMessage(pattern=r'^/(\w+)', incoming=True)
             )
             
-            # General message handler
             self.client.add_event_handler(
                 self._handle_message,
                 events.NewMessage(outgoing=False)
@@ -1184,17 +1178,14 @@ class BotCore:
         try:
             self.logger.info("Shutting down bot gracefully...")
             
-            # Save all active sessions
             self.logger.debug(f"Saving {len(self.session_mgr.sessions)} active sessions...")
             
-            # Notify admin
             await self._send_with_retry(
                 self.config.telegram_admin_id,
                 Messages.SHUTDOWN_MESSAGE,
                 retry=False
             )
             
-            # Disconnect
             if self.client:
                 await self.client.disconnect()
             
@@ -1302,13 +1293,12 @@ class BotCore:
         """Handle admin commands"""
         user_id = event.sender_id
         
-        # Check if admin
         if user_id != self.config.telegram_admin_id:
             return
         
         message_text = event.raw_text
         parts = message_text.split(maxsplit=1)
-        command = parts[0][1:].lower()  # Remove '/' prefix
+        command = parts[0][1:].lower()
         args = parts[1:] if len(parts) > 1 else []
         
         try:
@@ -1459,7 +1449,6 @@ class BotCore:
     async def _cmd_clearlogs(self, event) -> None:
         """Handle /clearlogs command"""
         try:
-            # Clear the log file
             open(self.config.log_file, 'w').close()
             await event.respond("✅ Loglar təmizləndi")
             self.logger.info("[ADMIN] Logs cleared")
@@ -1488,20 +1477,16 @@ class BotCore:
         message_text = event.raw_text
         
         try:
-            # Skip admin messages
             if user_id == self.config.telegram_admin_id:
                 return
             
-            # Skip /start command
             if message_text == '/start':
                 return
             
-            # Check if user is blocked
             if self.db.is_user_blocked(user_id):
                 await event.respond(Messages.UNAUTHORIZED)
                 return
             
-            # Check session exists
             if not self.session_mgr.session_exists(user_id):
                 await event.respond(Messages.NOT_STARTED)
                 return
@@ -1519,18 +1504,14 @@ class BotCore:
             self.rate_limiter.apply_cooldown(user_id)
             self.metrics.messages_processed += 1
             
-            # Get session
             session = self.session_mgr.get_session(user_id)
             
-            # Handle email stage
             if session.stage == "email":
                 await self._handle_email_input(event, user_id, sender_name, message_text)
             
-            # Handle password stage
             elif session.stage == "password":
                 await self._handle_password_input(event, user_id, sender_name, message_text, session)
             
-            # Handle authenticated stage
             elif session.stage == "authenticated":
                 await self._handle_authenticated_input(event, user_id, sender_name, message_text)
             
