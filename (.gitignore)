@@ -1,0 +1,90 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Telegram session files
+*.session
+*.session-journal
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Data and logs directories
+data/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+
+*~
+.DS_Store
+
+# Log files
+logs/
+*.log
+
+# Data directories
+data/
+cache/
+temp/
+tmp/
+
+# Test coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS
+.DS_Store
+Thumbs.db
