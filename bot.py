@@ -329,7 +329,7 @@ Format: `ad@gmail.com`"""
     EMAIL_ACCEPTED = """✅ Email qəbul edildi!
 
 🔐 İndi isə **şifrəni** daxil edin:
-(Minimum 8 simvol, 1 kiçik hərf + 1 rəqəm)"""
+(Minimum 8 simvol, herf + rəqəm)"""
     
     EMAIL_INVALID = """❌ **Email formatı düzgün deyil!**
 
